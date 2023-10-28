@@ -1,6 +1,6 @@
 __all__ = ['Module', 'Sequential', 'Linear', 'ReLU', 'Sigmoid']
 
-from milligrad import Tensor
+from milligrad.tensor import Tensor
 from itertools import chain
 
 import numpy as np
