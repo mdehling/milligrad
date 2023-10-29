@@ -1,6 +1,15 @@
-__all__ = ['Module', 'Sequential', 'Linear', 'ReLU', 'Sigmoid']
+__all__ = [
+    'Module',
+    'Sequential',
+    'Linear',
+    'ReLU',
+    'Sigmoid',
+    'Softmax',
+    'LogSoftmax',
+]
 
 from milligrad.tensor import Tensor
+from milligrad.nn.functional import softmax, log_softmax
 from itertools import chain
 
 import numpy as np
@@ -61,3 +70,23 @@ class Sigmoid(Module):
 
     def forward(self, input):
         return input.sigmoid()
+
+
+class Softmax(Module):
+
+    def __init__(self, axis=-1):
+        super().__init__()
+        self.axis = axis
+
+    def forward(self, input):
+        return softmax(input, self.axis)
+
+
+class LogSoftmax(Module):
+
+    def __init__(self, axis=-1):
+        super().__init__()
+        self.axis = axis
+
+    def forward(self, input):
+        return log_softmax(input, self.axis)
