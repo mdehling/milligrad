@@ -1,4 +1,8 @@
-__all__ = ['make_linear', 'make_moons']
+__all__ = [
+    'make_linear',
+    'make_moons',
+    'make_blob_circle',
+]
 
 import numpy as np
 
@@ -25,4 +29,19 @@ def make_moons(n=100, *, noise=None):
     if noise is not None:
         x += noise * np.random.randn(n,2)
 
+    return x, y
+
+
+def make_blob_circle(k=5, n=250, std=0.2):
+    ni = n//k; n0 = n - (k-1)*ni
+    x = std * np.random.randn(n0,2)
+    y = np.zeros((n0,k)); y[:,0] = 1
+    xs, ys = [x], [y]
+    for i in range(1,k):
+        rad = 2*np.pi*i/(k-1)
+        x = std * np.random.randn(ni,2) + [[np.cos(rad),np.sin(rad)]]
+        y = np.zeros((ni,k)); y[:,i] = 1
+        xs.append(x)
+        ys.append(y)
+    x, y = np.vstack(xs), np.vstack(ys)
     return x, y
