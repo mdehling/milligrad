@@ -2,6 +2,14 @@ __all__ = ['Tensor']
 
 import numpy as np
 
+from functools import reduce
+import operator
+
+
+# analogue of builtin sum() function
+def product(it, /, start=1):
+    return reduce(operator.mul, it, start)
+
 
 # FIXME: This is a bit of a hack to implement 'reverse broadcasting' and I
 # should really think about a cleaner way.
@@ -228,16 +236,23 @@ class Tensor:
 
         return result
 
-    def mean(self):
-        value = np.mean(self.value)
-        result = Tensor(value, _label='mean', _children=(self,))
+    def sum(self, axis=None, keepdims=False):
+        value = np.sum(self.value, axis=axis, keepdims=True)
+        saved_shape = value.shape
+        if keepdims is False:
+            value = value.squeeze(axis)
+        result = Tensor(value, _label='sum', _children=(self,))
 
         if result.requires_grad:
             def _backward():
-                self.grad += np.mean(result.grad)
+                self.grad += result.grad.reshape(saved_shape)
             result._backward = _backward
 
         return result
+
+    def mean(self, axis=None, keepdims=False):
+        result = self.sum(axis=axis, keepdims=keepdims)
+        return result * (product(result.value.shape)/product(self.value.shape))
 
     def backward(self):
         nodes = list()
